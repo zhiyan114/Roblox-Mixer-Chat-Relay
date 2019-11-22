@@ -1,6 +1,7 @@
 {
-"RelayMyChat": true,
-"RelayAllRobloxChat": false,
-"RelayAllMixerChat": true,
-"ImplicitToken": ""
+"RelayMyChat":true,
+"RelayAllRobloxChat":false,
+"RelayAllMixerChat":true,
+"ChannelName":"",
+"Token":""
 }

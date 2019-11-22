@@ -2,17 +2,16 @@
 const Mixer = require('@mixer/client-node');
 const ws = require('ws');
 const fs = require('fs');
+const path = require('path');
 const { ShortCodeExpireError, OAuthClient } = require('@mixer/shortcode-oauth');
 
 // Get the configuration File or create a custom json to let the script know that it mising and throw an exception
-var Config = JSON.parse(fs.readFileSync("config.json") ?? '{"Internal": "NoConfig"}'')
+var Config = JSON.parse(fs.readFileSync(path.resolve(__dirname, 'config.json')) || '{"Internal": "NoConfig"}')
 
 // Check if the configuration is in good shape
 if(Config['Internal'] == "NoConfig") {
   throw new Error("Configuration File missing. Please download a new one")
-} else if(!Config['RelayMyChat'] || !Config['RelayAllRobloxChat'] || !Config['RelayAllMixerChat'] || !Config['ChannelName'] || !Config['Token']) {
-  throw new Error("Missing Configuration Objects, please download and use a new configuration file.")
- else if(Config['ChannelName'] == "") {
+} else if(Config['ChannelName'] == "") {
   throw new Error("Missing Channel Name Field. Please fill it out.")
  }
 
@@ -33,9 +32,9 @@ if(Config['Token'] == "") {
       throw err;
     });
     attempt().then(tokens => {
-      Config['Token'] = tokens.accessToken;
+      Config['Token'] = tokens.data.accessToken;
       // Save the configuration and let the user to restart the application.
-      fs.writeFileSync("config.json",JSON.stringify(Config))
+      fs.writeFileSync(path.resolve(__dirname, 'config.json'),JSON.stringify(Config))
       console.log("Token Successfully Generated and save into the configuration file, please re-run the script. At anytime if the token is invalidated, you may safely erase the Token part of the configuration to generate a new token.");
       process.exitCode = 1;
     });
