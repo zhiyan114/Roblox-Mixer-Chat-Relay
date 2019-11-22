@@ -7,4 +7,11 @@ A simple chat relay between roblox and mixer. Project was made for entertainment
 * **RelayMyChat** (Type: Bool) - This config will relay your chat from roblox and only your chat.
 * **RelayAllRobloxChat** (Type: Bool) - This relay everyone's roblox chat (even strangers on roblox) except your if you disable RelayMyChat.
 * **RelayAllMixerChat** (Type: Bool) - This relay's everyone's chat from mixer regardless who you are.
-* **ImplicitToken** (Type: String) - Use this ONLY if your able to get a Implicit Token from a client (such as Mixer developer site) otherwise leave empty and the internal software will give future authorization instruction (Use it only if you know what your doing and if you do, use it so that you will not be prompted with authorization everytime you load the js).
+* **ChannelName** (Type: String) - The channel name that the bot should be on.
+* **Token** (Type: String) - Use this ONLY if your able to get a Implicit Token from a client (such as Mixer developer site) otherwise leave empty and the internal software will give future authorization instruction.
+
+## Nodejs Package
+The following package you are required to install
+* **@mixer/shortcode-oauth** - Internal Authorization System
+* **ws** - The core feature of this Project or known as WebSocket
+* **@mixer/client-node** - The main function of the user chat bot
