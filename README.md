@@ -7,4 +7,4 @@ A simple chat relay between roblox and mixer. Project was made for entertainment
 For more informations and documentations, please read the Wiki
 
 ## Known Bugs (That will eventually fixed)
-* When players in roblox chat too quickly, the message will relay back to roblox (aka duplicate message). - To temporary solve this, set **RelayAllRobloxChat** to false on a busy server unless you don't mind.
+* Token is invalidated after a period of time - Can't really do anything about it but I will fix that so to solve it, delete the token from the config file and regenerate one.

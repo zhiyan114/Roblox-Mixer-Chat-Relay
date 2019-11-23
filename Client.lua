@@ -9,8 +9,9 @@ if(syn) then
   WebSocket.OnMessage:Connect(function(Msg)
     local ChatData = HttpService:JSONDecode(Msg)
     StarterGui:SetCore("ChatMakeSystemMessage",{
-      Text = "["..ChatData['Username'].."]: "..ChatData['Message'];
+      Text = "["..ChatData['Username'].."] (Mixer): "..ChatData['Message'];
       Color = Color3.fromRGB(0, 247, 255);
+      FontSize = Enum.FontSize.Size18;
     });
   end)
   local SendChatMessage = function(IsHost, Username, Msg)

@@ -60,14 +60,14 @@ if(!Config['Token'] ||Config['Token'] == "") {
       // Setup the mixer chat client
       var socket = null;
       var InternalSocket = null;
-      var LastRobloxToMixerMessage = "";
       chatclient.request('GET', 'users/current').then(function(UserData) {
         new Mixer.ChatService(chatclient).join(ChannelIdObj['id']).then(function(ClientChatData) {
           socket = new Mixer.Socket(ws, ClientChatData.body.endpoints).boot();
           socket.on('ChatMessage', data => {
             if(Config['RelayAllMixerChat'] == true) {
               if(InternalSocket && InternalSocket != null) {
-                if(LastRobloxToMixerMessage != data.message.message[0].data) {
+                // Make sure that the message sent by the bot isn't going to be relayed to roblox again
+                if(UserData.body.id != data.user_id) {
                   InternalSocket.send(JSON.stringify({"Username":data.user_name, "Message":data.message.message[0].data}));
                 }
               }
@@ -95,12 +95,10 @@ if(!Config['Token'] ||Config['Token'] == "") {
           var RobloxChatData = JSON.parse(msg);
           if(RobloxChatData['IsClient'] == true && Config['RelayMyChat'] == true) {
             // Relay the client's chat or your own chat if the config is enabled
-            LastRobloxToMixerMessage = "["+RobloxChatData['Username']+"]: "+RobloxChatData['Message'];
-            socket.call('msg',[LastRobloxToMixerMessage]);
+            socket.call('msg',["["+RobloxChatData['Username']+"]: "+RobloxChatData['Message']]);
           } else if(RobloxChatData['IsClient'] == false && Config['RelayAllRobloxChat'] == true) {
             // Relay all the players' chat in the game except your (unless enabled) if the config is enabled
-            LastRobloxToMixerMessage = "["+RobloxChatData['Username']+"]: "+RobloxChatData['Message'];
-            socket.call('msg',[LastRobloxToMixerMessage]);
+            socket.call('msg',["["+RobloxChatData['Username']+"]: "+RobloxChatData['Message']]);
           }
         })
         // Detect if the websocket is disconnected and if it is, accept another client. *Best to restart the script to prevent memory leak warnings*
