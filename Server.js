@@ -1,4 +1,4 @@
-//Roblox to Mixer Chat Relay Server by zhiyan114
+// Roblox to Mixer Chat Relay Server by zhiyan114
 
 // Load the configuration
 const Mixer = require('@mixer/client-node');
