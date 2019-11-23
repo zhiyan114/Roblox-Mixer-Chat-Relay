@@ -18,7 +18,7 @@ if(Config['Internal'] == "NoConfig") {
   throw new Error("Missing Channel Name Field. Please fill it out.")
 }
 
-if(Config['Token'] == "" ||) {
+if(!Config['Token'] ||Config['Token'] == "") {
   // Cannot find the user's authorization token, lets request the user for one
   const client = new OAuthClient({
     clientId: '61d126b36914d014844b54e614478330c03ca731700b4596',
@@ -48,10 +48,10 @@ if(Config['Token'] == "" ||) {
     var ChannelIdObj = JSON.parse(body);
     if(ChannelIdObj['id']) {
       // Successfully obtain the channel ID, now we can proceed with the chat functions
-      const client = new Mixer.Client(new Mixer.DefaultRequestRunner());
+      const chatclient = new Mixer.Client(new Mixer.DefaultRequestRunner());
       const wss = new ws.Server({ port: 37168 });
       var ActiveWsClient = false;
-      client.use(new Mixer.OAuthProvider(client, {
+      chatclient.use(new Mixer.OAuthProvider(chatclient, {
         tokens: {
           access: Config['Token'],
           expires: Date.now() + (365 * 24 * 60 * 60 * 1000)
@@ -60,17 +60,20 @@ if(Config['Token'] == "" ||) {
       // Setup the mixer chat client
       var socket = null;
       var InternalSocket = null;
-      client.request('GET', 'users/current').then(function(UserData) {
-        Mixer.ChatService(client).join(ChannelIdObj['id']).then(function(ClientChatData) {
-          socket = new Mixer.Socket(ws, ClientChatData.endpoints).boot();
+      var LastRobloxToMixerMessage = "";
+      chatclient.request('GET', 'users/current').then(function(UserData) {
+        new Mixer.ChatService(chatclient).join(ChannelIdObj['id']).then(function(ClientChatData) {
+          socket = new Mixer.Socket(ws, ClientChatData.body.endpoints).boot();
           socket.on('ChatMessage', data => {
             if(Config['RelayAllMixerChat'] == true) {
               if(InternalSocket && InternalSocket != null) {
-                InternalSocket.send(JSON.stringify({"Username":data.user_name, "Message":data.message.message[0].data}));
+                if(LastRobloxToMixerMessage != data.message.message[0].data) {
+                  InternalSocket.send(JSON.stringify({"Username":data.user_name, "Message":data.message.message[0].data}));
+                }
               }
             }
           });
-          socket.auth(channelId, userId, authkey).then(function() {
+          socket.auth(ChannelIdObj['id'], UserData.body.id, ClientChatData.body.authkey).then(function() {
             console.log('Mixer Chat socket authenticated');
             socket.call('msg',["Roblox and Mixer chat relay server has been started"])
           })
@@ -86,21 +89,23 @@ if(Config['Token'] == "" ||) {
         ActiveClient = true;
         InternalSocket = wsc;
         socket.call('msg',['Roblox Client has been connected. Message will now start to relay.'])
+        console.log("Connection with Socket has been established and message will start to relay")
         // Detect the message from the client and relay it to mixer chat
         wsc.on('message', function(msg) {
           var RobloxChatData = JSON.parse(msg);
           if(RobloxChatData['IsClient'] == true && Config['RelayMyChat'] == true) {
             // Relay the client's chat or your own chat if the config is enabled
-            socket.call('msg',["["+RobloxChatData['Username']+"]: "+RobloxChatData['Message']]);
+            LastRobloxToMixerMessage = "["+RobloxChatData['Username']+"]: "+RobloxChatData['Message'];
+            socket.call('msg',[LastRobloxToMixerMessage]);
           } else if(RobloxChatData['IsClient'] == false && Config['RelayAllRobloxChat'] == true) {
             // Relay all the players' chat in the game except your (unless enabled) if the config is enabled
-            socket.call('msg',["["+RobloxChatData['Username']+"]: "+RobloxChatData['Message']]);
+            LastRobloxToMixerMessage = "["+RobloxChatData['Username']+"]: "+RobloxChatData['Message'];
+            socket.call('msg',[LastRobloxToMixerMessage]);
           }
         })
         // Detect if the websocket is disconnected and if it is, accept another client. *Best to restart the script to prevent memory leak warnings*
         wsc.on('close', function() {
-          client.close()
-          console.log("Connection with Socket has been disconnected and will also disconnect mixer interactive.");
+          console.log("Connection with Socket has been disconnected and message will not longer relay");
           socket.call('msg',['Roblox Client has been disconnected. No further message will be relayed.']);
           InternalSocket = null;
           ActiveClient = false;

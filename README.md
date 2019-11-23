@@ -16,3 +16,6 @@ The following package you are required to install
 * **ws** - The core feature of this Project or known as WebSocket
 * **@mixer/client-node** - The main function of the user chat bot
 * **request** - To get additional required information such as channel id from the name you given in the config
+
+## Known Bugs (That will eventually fixed)
+* When players in roblox chat too quickly, the message will relay back to roblox (aka duplicate message). - To temporary solve this, set **RelayAllRobloxChat** to false on a busy server unless you don't mind.

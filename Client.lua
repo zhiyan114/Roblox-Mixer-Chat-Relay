@@ -10,7 +10,7 @@ if(syn) then
     local ChatData = HttpService:JSONDecode(Msg)
     StarterGui:SetCore("ChatMakeSystemMessage",{
       Text = "["..ChatData['Username'].."]: "..ChatData['Message'];
-      Color = Color3.fromRGB(173, 216, 230);
+      Color = Color3.fromRGB(0, 247, 255);
     });
   end)
   local SendChatMessage = function(IsHost, Username, Msg)
