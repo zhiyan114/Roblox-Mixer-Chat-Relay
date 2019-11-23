@@ -15,3 +15,4 @@ The following package you are required to install
 * **@mixer/shortcode-oauth** - Internal Authorization System
 * **ws** - The core feature of this Project or known as WebSocket
 * **@mixer/client-node** - The main function of the user chat bot
+* **request** - To get additional required information such as channel id from the name you given in the config
