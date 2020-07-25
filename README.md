@@ -1,5 +1,8 @@
 # Roblox-Mixer-Chat-Relay
 
+## DISCONTINUED
+Mixer has recently announced to shutdown (7/22/2020) which means that this program are no longer in-use. Will stay archive for Mixer memorial purpose.
+
 ## About
 A simple chat relay between roblox and mixer. Project was made for entertainment purpose, use it with risk.
 
